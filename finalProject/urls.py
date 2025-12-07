@@ -16,8 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.shortcuts import redirect
+
+def redirect_to_products():
+    return redirect('/proteinSearch/products/')
 
 urlpatterns = [
+    path('', redirect_to_products),
     path('proteinSearch/', include('proteinSearch.urls')),
     path('admin/', admin.site.urls),
 ]
