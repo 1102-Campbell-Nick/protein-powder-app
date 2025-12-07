@@ -208,8 +208,8 @@
                     <th>Carbs (g)</th>
                     <th>Fats (g)</th>
                     <th>BCAAs (g)</th>
-                    <th>Price/Serving ($)</th>
                     <th>Sugar Free</th>
+                    <th>Price/Serving ($)</th>
                     <th>Additives & Sweeteners</th>
                     <th>Lactose Free</th>
                     <th>Gluten Free</th>
@@ -229,19 +229,30 @@
                         {% endif %}
                     </td>
                     <td>{% if product.avg_rating %}{{ product.avg_rating|floatformat:1 }} / 5{% else %}–{% endif %}</td>
-                    <td>{% if product.nutritionfacts.calories_per_scoop == -1 %}–{% else %}{{ product.nutritionfacts.calories_per_scoop }}{% endif %}</td>
-                    <td>{% if product.nutritionfacts.protein_grams == -1 %}–{% else %}{{ product.nutritionfacts.protein_grams }}{% endif %}</td>
-                    <td>{% if product.nutritionfacts.carbs_grams == -1 %}–{% else %}{{ product.nutritionfacts.carbs_grams }}{% endif %}</td>
-                    <td>{% if product.nutritionfacts.fat_grams == -1 %}–{% else %}{{ product.nutritionfacts.fat_grams }}{% endif %}</td>
-                    <td>{% if product.nutritionfacts.bcaas_grams == -1 %}–{% else %}{{ product.nutritionfacts.bcaas_grams }}{% endif %}</td>
-                    <td>{% if product.servinginfo.price_per_serving == -1 %}–{% else %}{{ product.servinginfo.price_per_serving }}{% endif %}</td>
-
-                    <td>{{ product.nutritionfacts.sugar_free|yesno:"Yes,No" }}</td>
-                    <td>{{ product.features.additives_and_sweeteners|yesno:"Yes,No" }}</td>
-                    <td>{{ product.features.lactose_free|yesno:"Yes,No" }}</td>
-                    <td>{{ product.features.gluten_free|yesno:"Yes,No" }}</td>
-                    <td>{{ product.features.third_party_tested|yesno:"Yes,No" }}</td>
-                    <td>{{ product.features.scoop_included|yesno:"Yes,No" }}</td>
+                    {% if product.nutritionfacts %}
+                        <td>{% if product.nutritionfacts.calories_per_scoop == -1 %}–{% else %}{{ product.nutritionfacts.calories_per_scoop }}{% endif %}</td>
+                        <td>{% if product.nutritionfacts.protein_grams == -1 %}–{% else %}{{ product.nutritionfacts.protein_grams }}{% endif %}</td>
+                        <td>{% if product.nutritionfacts.carbs_grams == -1 %}–{% else %}{{ product.nutritionfacts.carbs_grams }}{% endif %}</td>
+                        <td>{% if product.nutritionfacts.fat_grams == -1 %}–{% else %}{{ product.nutritionfacts.fat_grams }}{% endif %}</td>
+                        <td>{% if product.nutritionfacts.bcaas_grams == -1 %}–{% else %}{{ product.nutritionfacts.bcaas_grams }}{% endif %}</td>
+                        <td>{{ product.nutritionfacts.sugar_free|yesno:"Yes,No" }}</td>
+                    {% else %}
+                        <td colspan="6">-</td>
+                    {% endif %}
+                    {% if product.servinginfo %}
+                        <td>{% if product.servinginfo.price_per_serving == -1 %}–{% else %}{{ product.servinginfo.price_per_serving }}{% endif %}</td>
+                    {% else %}
+                        <td colspan="1">-</td>
+                    {% endif %}
+                    {% if product.features %}
+                        <td>{{ product.features.additives_and_sweeteners|yesno:"Yes,No" }}</td>
+                        <td>{{ product.features.lactose_free|yesno:"Yes,No" }}</td>
+                        <td>{{ product.features.gluten_free|yesno:"Yes,No" }}</td>
+                        <td>{{ product.features.third_party_tested|yesno:"Yes,No" }}</td>
+                        <td>{{ product.features.scoop_included|yesno:"Yes,No" }}</td>
+                    {% else %}
+                        <td colspan="5">-</td>
+                    {% endif %}
                 </tr>
                 {% empty %}
                 <tr>
