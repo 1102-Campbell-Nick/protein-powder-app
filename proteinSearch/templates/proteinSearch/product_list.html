@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Protein Powders</title>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #e6f0ff;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h1, h2, h3, h4{
+            margin: 0 0 10px 0;
+        }
+
+        header{
+            background: linear-gradient(to right, #1e3a8a 360px, #3b82f6 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .container{
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar{
+            width: 360px;
+            background-color: #1e3a8a;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 2px solid #3b82f6;
+            color: #ffffff;
+        }
+
+        .sidebar h3, .sidebar h4{
+            color: #ffffff;
+        }
+
+        .sidebar label{
+            color: #f0f8ff;
+        }
+
+        .main{
+            flex-grow: 1;
+            padding: 0px;
+            overflow: auto;
+        }
+
+        form label{
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        hr{
+            margin: 15px 0;
+            border: none;
+            border-top: 1px solid #3b82f6;
+        }
+
+        .btn{
+            display: inline-block;
+            background-color: #3b82f6;
+            border: none;
+            padding: 8px 15px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn:hover{
+            background-color: #2563eb;
+        }
+
+        table{
+            width: max-content;
+            min-width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td{
+            border: 1px solid #bdd7ff;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th{
+            background-color: #cfe0ff;
+            color: #1e3a8a;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        tr:nth-child(even){
+            background-color: #f0f5ff;
+        }
+
+        tr:hover{
+            background-color: #dbe9ff;
+        }
+
+        .view-button{
+            background-color: #1d4ed8;
+            color: white;
+            padding: 4px 8px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+
+        .view-button:hover{
+            background-color: #1e40af;
+        }
+
+        .no-link{
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Clickable row */
+        .clickable-row{
+            cursor: pointer;
+        }
+
+        .clickable-row:hover{
+            background-color: #dbe9ff;
+        }
+    </style>
+</head>
+<body>
+    <header>Protein Powder Search</header>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Filters</h3>
+            <form method="GET">
+                <h4>Powder Type</h4>
+                {% for powder_type in powder_types %}
+                    <label>
+                        <input type="checkbox" name="powder_type" value="{{ powder_type.id }}" {% if powder_type.id|stringformat:"s" in selected_powder_types %} checked {% endif %}>
+                        {{ powder_type.name }}
+                    </label>
+                {% endfor %}
+
+                <hr>
+
+                <h4>Protein Origin</h4>
+                {% for protein_origin in protein_origins %}
+                    <label>
+                        <input type="checkbox" name="protein_origin" value="{{ protein_origin.id }}" {% if protein_origin.id|stringformat:"s" in selected_protein_origins %} checked {% endif %}>
+                        {{ protein_origin.name }}
+                    </label>
+                {% endfor %}
+
+                <hr>
+
+                <h4>Nutrition Filters</h4>
+                <label>Calories ≤ <input type="number" name="max_calories" value="{{ request.GET.max_calories }}"></label>
+                <label>Protein (g) ≥ <input type="number" name="min_protein" value="{{ request.GET.min_protein }}"></label>
+                <label>Carbs (g) ≤ <input type="number" name="max_carbs" value="{{ request.GET.max_carbs }}"></label>
+                <label>Fats (g) ≤ <input type="number" name="max_fats" value="{{ request.GET.max_fats }}"></label>
+                <label>BCAAs (g) ≤ <input type="number" name="max_bcaas" value="{{ request.GET.max_bcaas }}"></label>
+                <label><input type="checkbox" name="sugar_free" value="1" {% if request.GET.sugar_free %} checked {%endif%}> Sugar Free</label>
+
+                <hr>
+
+                <h4>Serving Info</h4>
+                <label>Servings Per Container ≥ <input type="number" name="min_servings" value="{{ request.GET.min_servings }}"></label>
+                <label>Price Per Serving ≤ <input type="number" name="max_price" value="{{ request.GET.max_price }}"></label>
+
+                <hr>
+
+                <h4>Features</h4>
+                <label><input type="checkbox" name="additives_and_sweeteners" value="1" {% if request.GET.additives_and_sweeteners %} checked {%endif%}> Additives and Sweeteners</label>
+                <label><input type="checkbox" name="lactose_free" value="1" {% if request.GET.lactose_free %} checked {%endif%}> Lactose Free</label>
+                <label><input type="checkbox" name="gluten_free" value="1" {% if request.GET.gluten_free %} checked {%endif%}> Gluten Free</label>
+                <label><input type="checkbox" name="third_party_tested" value="1" {% if request.GET.third_party_tested %} checked {%endif%}> 3rd Party Tested</label>
+                <label><input type="checkbox" name="scoop_included" value="1" {% if request.GET.scoop_included %} checked {%endif%}> Scoop Included</label>
+
+                <hr>
+
+                <button type="submit" class="btn">Apply Filters</button>
+                <a href="{% url 'product_list' %}" class="btn">Clear Filters</a>
+            </form>
+        </div>
+
+        <div class="main">
+            <table>
+                <tr>
+                    <th>Brand</th>
+                    <th>Product Name</th>
+                    <th>Link</th>
+                    <th>Avg Rating</th>
+                    <th>Calories</th>
+                    <th>Protein (g)</th>
+                    <th>Carbs (g)</th>
+                    <th>Fats (g)</th>
+                    <th>BCAAs (g)</th>
+                    <th>Price/Serving ($)</th>
+                    <th>Sugar Free</th>
+                    <th>Additives & Sweeteners</th>
+                    <th>Lactose Free</th>
+                    <th>Gluten Free</th>
+                    <th>3rd Party Tested</th>
+                    <th>Scoop Included</th>
+                </tr>
+
+                {% for product in products %}
+                <tr class="clickable-row" data-url="{% url 'product_detail' product.id %}">
+                    <td>{{ product.brand|default:"–" }}</td>
+                    <td>{{ product.model|default:"–" }}</td>
+                    <td>
+                        {% if product.link %}
+                            <a href="{{ product.link }}" target="_blank" class="view-button">View</a>
+                        {% else %}
+                            <span class="no-link">–</span>
+                        {% endif %}
+                    </td>
+                    <td>{% if product.avg_rating %}{{ product.avg_rating|floatformat:1 }} / 5{% else %}–{% endif %}</td>
+                    <td>{% if product.nutritionfacts.calories_per_scoop == -1 %}–{% else %}{{ product.nutritionfacts.calories_per_scoop }}{% endif %}</td>
+                    <td>{% if product.nutritionfacts.protein_grams == -1 %}–{% else %}{{ product.nutritionfacts.protein_grams }}{% endif %}</td>
+                    <td>{% if product.nutritionfacts.carbs_grams == -1 %}–{% else %}{{ product.nutritionfacts.carbs_grams }}{% endif %}</td>
+                    <td>{% if product.nutritionfacts.fat_grams == -1 %}–{% else %}{{ product.nutritionfacts.fat_grams }}{% endif %}</td>
+                    <td>{% if product.nutritionfacts.bcaas_grams == -1 %}–{% else %}{{ product.nutritionfacts.bcaas_grams }}{% endif %}</td>
+                    <td>{% if product.servinginfo.price_per_serving == -1 %}–{% else %}{{ product.servinginfo.price_per_serving }}{% endif %}</td>
+
+                    <td>{{ product.nutritionfacts.sugar_free|yesno:"Yes,No" }}</td>
+                    <td>{{ product.features.additives_and_sweeteners|yesno:"Yes,No" }}</td>
+                    <td>{{ product.features.lactose_free|yesno:"Yes,No" }}</td>
+                    <td>{{ product.features.gluten_free|yesno:"Yes,No" }}</td>
+                    <td>{{ product.features.third_party_tested|yesno:"Yes,No" }}</td>
+                    <td>{{ product.features.scoop_included|yesno:"Yes,No" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="16">No products found matching the selected filters.</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.clickable-row');
+            rows.forEach(row => {
+                row.addEventListener('click', function(e) {
+                    if(e.target.tagName.toLowerCase() !== 'a') {
+                        window.location.href = row.dataset.url;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

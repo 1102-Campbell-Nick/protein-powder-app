@@ -1,0 +1,38 @@
+<h2>{{ product.brand }} - {{ product.model }}</h2>
+<p>
+{% if product.link %}
+    <a href="{{ product.link }}" target="_blank">View Product</a>
+{% else %}
+    <span class="no-link">–</span>
+{% endif %}
+</p>
+
+<h3>Leave a Review</h3>
+{% if user.is_authenticated %}
+<form method="POST" action="{% url 'submit_review' product.id %}">
+    {% csrf_token %}
+    <label>Title:</label><br>
+    <input type="text" name="title" maxlength="255" required><br>
+    <label>Rating (1-5):</label>
+    <input type="number" name="rating" min="1" max="5" required><br>
+    <label>Review:</label><br>
+    <textarea name="review_text" rows="4" cols="50" required></textarea><br>
+    <button type="submit">Submit Review</button>
+</form>
+{% else %}
+<p><a href="{% url 'login' %}">Login</a> to submit a review.</p>
+{% endif %}
+
+<h3>User Reviews</h3>
+{% if reviews %}
+    {% for review in reviews %}
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+            <strong>{{ review.user.username }}</strong> - Rating: {{ review.rating }}/5 <br>
+            <em>{{ review.title }}</em><br>
+            {{ review.review_text|linebreaks }}<br>
+            <small>{{ review.review_date|date:"M d, Y" }}</small>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No reviews yet.</p>
+{% endif %}
