@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.shortcuts import redirect
 
-def redirect_to_products():
+def redirect_to_products(request):
     return redirect('/proteinSearch/products/')
 
 urlpatterns = [
